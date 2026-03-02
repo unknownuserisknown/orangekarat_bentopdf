@@ -49,7 +49,11 @@ ENV VITE_FOOTER_TEXT=$VITE_FOOTER_TEXT
 
 ENV NODE_OPTIONS="--max-old-space-size=3072"
 
-RUN npm run build:with-docs
+RUN --mount=type=secret,id=VITE_CORS_PROXY_URL \
+    --mount=type=secret,id=VITE_CORS_PROXY_SECRET \
+    VITE_CORS_PROXY_URL=$(cat /run/secrets/VITE_CORS_PROXY_URL 2>/dev/null || echo "") \
+    VITE_CORS_PROXY_SECRET=$(cat /run/secrets/VITE_CORS_PROXY_SECRET 2>/dev/null || echo "") \
+    npm run build:with-docs
 
 # Production stage
 FROM quay.io/nginx/nginx-unprivileged:stable-alpine-slim
