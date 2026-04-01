@@ -10,7 +10,10 @@ import { state } from '../state.js';
 import { createIcons, icons } from 'lucide';
 import { convertFileToPdfA, type PdfALevel } from '../utils/ghostscript-loader';
 import { loadPyMuPDF, isPyMuPDFAvailable } from '../utils/pymupdf-loader.js';
+import type { PyMuPDFInstance } from '@/types';
 import { showWasmRequiredDialog } from '../utils/wasm-provider.js';
+import { batchDecryptIfNeeded } from '../utils/password-prompt.js';
+import { deduplicateFileName } from '../utils/deduplicate-filename.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.getElementById('file-input') as HTMLInputElement;
@@ -107,9 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       if (state.files.length === 0) {
         showAlert('No Files', 'Please select at least one PDF file.');
-        hideLoader();
         return;
       }
+
+      state.files = await batchDecryptIfNeeded(state.files);
 
       if (state.files.length === 1) {
         const originalFile = state.files[0];
@@ -124,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (shouldPreFlatten) {
           if (!isPyMuPDFAvailable()) {
             showWasmRequiredDialog('pymupdf');
-            hideLoader();
             return;
           }
 
@@ -132,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const pymupdf = await loadPyMuPDF();
 
           // Rasterize PDF to images and back to PDF (300 DPI for quality)
-          const flattenedBlob = await (pymupdf as any).rasterizePdf(
+          const flattenedBlob = await (pymupdf as PyMuPDFInstance).rasterizePdf(
             originalFile,
             {
               dpi: 300,
@@ -169,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showLoader('Converting multiple PDFs to PDF/A...');
         const JSZip = (await import('jszip')).default;
         const zip = new JSZip();
+        const usedNames = new Set<string>();
 
         for (let i = 0; i < state.files.length; i++) {
           const file = state.files[i];
@@ -182,7 +186,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
           const baseName = file.name.replace(/\.pdf$/i, '');
           const blobBuffer = await convertedBlob.arrayBuffer();
-          zip.file(`${baseName}_pdfa.pdf`, blobBuffer);
+          const zipEntryName = deduplicateFileName(
+            `${baseName}_pdfa.pdf`,
+            usedNames
+          );
+          zip.file(zipEntryName, blobBuffer);
         }
 
         const zipBlob = await zip.generateAsync({ type: 'blob' });
@@ -198,11 +206,11 @@ document.addEventListener('DOMContentLoaded', () => {
           () => resetState()
         );
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       hideLoader();
       showAlert(
         'Error',
-        `An error occurred during conversion. Error: ${e.message}`
+        `An error occurred during conversion. Error: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   };

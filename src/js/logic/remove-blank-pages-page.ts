@@ -2,6 +2,8 @@ import { PDFDocument } from 'pdf-lib';
 import * as pdfjsLib from 'pdfjs-dist';
 import { createIcons, icons } from 'lucide';
 import { initPagePreview } from '../utils/page-preview.js';
+import { loadPdfWithPasswordPrompt } from '../utils/password-prompt.js';
+import { loadPdfDocument } from '../utils/load-pdf-document.js';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -34,7 +36,7 @@ function hideLoader() {
 function showAlert(
   title: string,
   msg: string,
-  type = 'error',
+  _type = 'error',
   cb?: () => void
 ) {
   const modal = document.getElementById('alert-modal');
@@ -116,11 +118,13 @@ async function handleFileUpload(file: File) {
     showAlert('Error', 'Please upload a valid PDF file.');
     return;
   }
-  showLoader('Loading PDF...');
   try {
-    const buf = await file.arrayBuffer();
-    pageState.pdfDoc = await PDFDocument.load(buf);
-    pageState.file = file;
+    const result = await loadPdfWithPasswordPrompt(file);
+    if (!result) return;
+    showLoader('Loading PDF...');
+    result.pdf.destroy();
+    pageState.pdfDoc = await loadPdfDocument(result.bytes);
+    pageState.file = result.file;
     pageState.detectedBlankPages = [];
     updateFileDisplay();
     document.getElementById('options-panel')?.classList.remove('hidden');
@@ -134,7 +138,7 @@ async function handleFileUpload(file: File) {
 }
 
 async function isPageBlank(
-  page: any,
+  page: pdfjsLib.PDFPageProxy,
   maxNonWhitePercent = 0.5
 ): Promise<boolean> {
   const viewport = page.getViewport({ scale: 0.5 });
@@ -145,7 +149,7 @@ async function isPageBlank(
   canvas.width = viewport.width;
   canvas.height = viewport.height;
 
-  await page.render({ canvasContext: ctx, viewport }).promise;
+  await page.render({ canvas: null, canvasContext: ctx, viewport }).promise;
 
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const data = imageData.data;
@@ -161,7 +165,7 @@ async function isPageBlank(
   return nonWhitePercent <= maxNonWhitePercent;
 }
 
-async function generateThumbnail(page: any): Promise<string> {
+async function generateThumbnail(page: pdfjsLib.PDFPageProxy): Promise<string> {
   const viewport = page.getViewport({ scale: 1 });
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -170,7 +174,7 @@ async function generateThumbnail(page: any): Promise<string> {
   canvas.width = viewport.width;
   canvas.height = viewport.height;
 
-  await page.render({ canvasContext: ctx, viewport }).promise;
+  await page.render({ canvas: null, canvasContext: ctx, viewport }).promise;
   return canvas.toDataURL('image/jpeg', 0.7);
 }
 

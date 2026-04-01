@@ -1,8 +1,10 @@
-import { isWasmAvailable, getWasmBaseUrl } from '../config/wasm-cdn-config.js';
-import { showWasmRequiredDialog } from '../utils/wasm-provider.js';
-import { loadPyMuPDF, isPyMuPDFAvailable } from '../utils/pymupdf-loader.js';
+import { loadPyMuPDF } from '../utils/pymupdf-loader.js';
+import type { PyMuPDFInstance } from '@/types';
+import { batchDecryptIfNeeded } from '../utils/password-prompt.js';
 import { createIcons, icons } from 'lucide';
 import { downloadFile } from '../utils/helpers';
+import { isWasmAvailable } from '../config/wasm-cdn-config.js';
+import { showWasmRequiredDialog } from '../utils/wasm-provider.js';
 
 interface DeskewResult {
   totalPages: number;
@@ -12,11 +14,11 @@ interface DeskewResult {
 }
 
 let selectedFiles: File[] = [];
-let pymupdf: any = null;
+let pymupdf: PyMuPDFInstance | null = null;
 
-async function initPyMuPDF(): Promise<any> {
+async function initPyMuPDF(): Promise<PyMuPDFInstance> {
   if (!pymupdf) {
-    pymupdf = await loadPyMuPDF();
+    pymupdf = (await loadPyMuPDF()) as PyMuPDFInstance;
   }
   return pymupdf;
 }
@@ -150,6 +152,8 @@ async function processDeskew(): Promise<void> {
 
   const threshold = parseFloat(thresholdSelect?.value || '0.5');
   const dpi = parseInt(dpiSelect?.value || '150', 10);
+
+  selectedFiles = await batchDecryptIfNeeded(selectedFiles);
 
   showLoader('Initializing PyMuPDF...');
 

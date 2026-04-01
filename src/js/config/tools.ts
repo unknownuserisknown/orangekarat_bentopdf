@@ -546,6 +546,12 @@ const baseCategories = [
         subtitle: 'Duplicate, reorder, and delete pages.',
       },
       {
+        href: import.meta.env.BASE_URL + 'overlay-pdf.html',
+        name: 'PDF Overlay',
+        icon: 'ph-stack-simple',
+        subtitle: 'Overlay or underlay pages from one PDF onto another.',
+      },
+      {
         href: import.meta.env.BASE_URL + 'add-attachments.html',
         name: 'Add Attachments',
         icon: 'ph-paperclip',
@@ -798,6 +804,13 @@ const baseCategories = [
         name: 'Validate Signature',
         icon: 'ph-seal-check',
         subtitle: 'Verify digital signatures and view certificate details.',
+      },
+      {
+        href: import.meta.env.BASE_URL + 'timestamp-pdf.html',
+        name: 'Timestamp PDF',
+        icon: 'ph-clock',
+        subtitle:
+          'Add an RFC 3161 document timestamp using a trusted TSA server.',
       },
     ],
   },
