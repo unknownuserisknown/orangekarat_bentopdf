@@ -894,6 +894,12 @@
     ],
     "fileCount": 1
   },
+  "Ascending": {
+    "files": [
+      "utils/sortable-file-list.ts"
+    ],
+    "fileCount": 1
+  },
   "Aspect Ratio": {
     "files": [
       "logic/page-dimensions-page.ts"
@@ -2155,6 +2161,12 @@
     ],
     "fileCount": 1
   },
+  "Could not read the timestamp token": {
+    "files": [
+      "logic/validate-signature-pdf.ts"
+    ],
+    "fileCount": 1
+  },
   "Could not reduce file size further. Original: {{originalSize}}, New: {{compressedSize}}.": {
     "files": [
       "logic/compress-pdf-page.ts"
@@ -2489,6 +2501,12 @@
     ],
     "fileCount": 1
   },
+  "Descending": {
+    "files": [
+      "utils/sortable-file-list.ts"
+    ],
+    "fileCount": 1
+  },
   "Description": {
     "files": [
       "logic/edit-pdf-text-page.ts"
@@ -2580,9 +2598,21 @@
     ],
     "fileCount": 1
   },
+  "Document Timestamp {{n}}": {
+    "files": [
+      "logic/validate-signature-pdf-page.ts"
+    ],
+    "fileCount": 1
+  },
   "Document Type": {
     "files": [
       "logic/page-dimensions-page.ts"
+    ],
+    "fileCount": 1
+  },
+  "Document hash does not match the timestamp: PDF was modified after timestamping": {
+    "files": [
+      "logic/validate-signature-pdf.ts"
     ],
     "fileCount": 1
   },
@@ -5222,6 +5252,18 @@
     ],
     "fileCount": 1
   },
+  "Modified After Timestamping (timestamped part intact)": {
+    "files": [
+      "logic/validate-signature-pdf-page.ts"
+    ],
+    "fileCount": 1
+  },
+  "Modified date": {
+    "files": [
+      "utils/sortable-file-list.ts"
+    ],
+    "fileCount": 1
+  },
   "More": {
     "files": [
       "logic/edit-pdf-text-dock.ts"
@@ -5273,6 +5315,12 @@
   "N-Up PDF created successfully!": {
     "files": [
       "logic/n-up-pdf-page.ts"
+    ],
+    "fileCount": 1
+  },
+  "Name": {
+    "files": [
+      "utils/sortable-file-list.ts"
     ],
     "fileCount": 1
   },
@@ -5591,7 +5639,7 @@
       "logic/compress-pdf-page.ts",
       "logic/form-creator.ts"
     ],
-    "fileCount": 3
+    "fileCount": 4
   },
   "None of the files could be compressed: {{join}}.": {
     "files": [
@@ -8072,6 +8120,12 @@
     ],
     "fileCount": 1
   },
+  "Size": {
+    "files": [
+      "utils/sortable-file-list.ts"
+    ],
+    "fileCount": 1
+  },
   "Skew Threshold": {
     "files": [
       "workflow/nodes/deskew-node.ts"
@@ -8189,6 +8243,12 @@
   "Some redaction marks could not be applied, so the file was not downloaded. Apply or remove them in the editor and try again.": {
     "files": [
       "logic/edit-pdf-page.ts"
+    ],
+    "fileCount": 1
+  },
+  "Sort by": {
+    "files": [
+      "utils/sortable-file-list.ts"
     ],
     "fileCount": 1
   },
@@ -8903,6 +8963,30 @@
     ],
     "fileCount": 1
   },
+  "Timestamp Imprint Algorithm:": {
+    "files": [
+      "logic/validate-signature-pdf-page.ts"
+    ],
+    "fileCount": 1
+  },
+  "Timestamp Intact: Timestamp Authority Not Verified": {
+    "files": [
+      "logic/validate-signature-pdf-page.ts"
+    ],
+    "fileCount": 1
+  },
+  "Timestamped By": {
+    "files": [
+      "logic/validate-signature-pdf-page.ts"
+    ],
+    "fileCount": 1
+  },
+  "Timestamped On": {
+    "files": [
+      "logic/validate-signature-pdf-page.ts"
+    ],
+    "fileCount": 1
+  },
   "Tint": {
     "files": [
       "workflow/nodes/adjust-colors-node.ts"
@@ -9435,6 +9519,12 @@
     "fileCount": 1
   },
   "Valid Signature": {
+    "files": [
+      "logic/validate-signature-pdf-page.ts"
+    ],
+    "fileCount": 1
+  },
+  "Valid Timestamp": {
     "files": [
       "logic/validate-signature-pdf-page.ts"
     ],
